@@ -204,7 +204,7 @@ class Program
         {
             var server = servers[index - 1];
 
-            // Store credentials
+            // 1. Store credentials temporarily using cmdkey
             Process.Start(new ProcessStartInfo
             {
                 FileName = "cmdkey",
@@ -213,16 +213,33 @@ class Program
                 UseShellExecute = false
             })?.WaitForExit();
 
-            // Launch RDP
-            Process.Start("mstsc", $"/v:{server.IP}");
+            // 2. Launch RDP session
+            var rdpProcess = Process.Start("mstsc", $"/v:{server.IP}");
 
             Console.WriteLine($"Opening Remote Desktop to {server.IP}...");
-            Logger.Log(logFilePath, $"Connected to {server.Name} ({server.IP})");
+
+            // 3. Wait briefly and delete credentials (gives RDP time to start)
+            Task.Delay(5000).ContinueWith(_ =>
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmdkey",
+                    Arguments = $"/delete:{server.IP}",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                })?.WaitForExit();
+
+                Console.WriteLine($"Credentials for {server.IP} deleted.");
+                Logger.Log(logFilePath, $"Temporary credentials for {server.Name} ({server.IP}) deleted.");
+            });
+
+            Logger.Log(logFilePath, $"Connected to {server.Name} ({server.IP}) using temporary credentials.");
         }
         else
         {
             Console.WriteLine("Invalid index.");
         }
     }
+
 
 }
