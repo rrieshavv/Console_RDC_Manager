@@ -68,6 +68,7 @@ class Program
         while (true)
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("==== Server Manager ====");
             Console.WriteLine("1. View Servers");
             Console.WriteLine("2. Add Server");
@@ -76,6 +77,7 @@ class Program
             Console.WriteLine("5. Connect to Server (RDP)");
             Console.WriteLine("6. Change App Password");
             Console.WriteLine("7. Exit");
+            Console.ResetColor();
             Console.Write("Choose an option: ");
             var choice = Console.ReadLine();
 
@@ -115,6 +117,7 @@ class Program
     {
         if (servers.Count == 0)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("No servers found.");
             return;
         }
@@ -122,8 +125,10 @@ class Program
         for (int i = 0; i < servers.Count; i++)
         {
             var s = servers[i];
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{i + 1}. Name: {s.Name}, IP: {s.IP}, Username: {s.Username}");
         }
+        Console.ResetColor();
     }
 
     static void AddServer()
@@ -204,7 +209,6 @@ class Program
         {
             var server = servers[index - 1];
 
-            // 1. Store credentials temporarily using cmdkey
             Process.Start(new ProcessStartInfo
             {
                 FileName = "cmdkey",
@@ -213,12 +217,12 @@ class Program
                 UseShellExecute = false
             })?.WaitForExit();
 
-            // 2. Launch RDP session
             var rdpProcess = Process.Start("mstsc", $"/v:{server.IP}");
 
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Opening Remote Desktop to {server.IP}...");
+            Console.ResetColor(); // Optional: resets to default color
 
-            // 3. Wait briefly and delete credentials (gives RDP time to start)
             Task.Delay(5000).ContinueWith(_ =>
             {
                 Process.Start(new ProcessStartInfo
