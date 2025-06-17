@@ -119,17 +119,38 @@ class Program
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("No servers found.");
+            Console.ResetColor();
             return;
         }
 
+        int noWidth = 5;
+        int nameWidth = 25;
+        int ipWidth = 17;
+        int userWidth = 25;
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine(
+            $"{Pad("No", noWidth)} | {Pad("Name", nameWidth)} | {Pad("IP", ipWidth)} | {Pad("Username", userWidth)}");
+        Console.WriteLine(new string('-', noWidth + nameWidth + ipWidth + userWidth + 9));
+
+        Console.ForegroundColor = ConsoleColor.Green;
         for (int i = 0; i < servers.Count; i++)
         {
             var s = servers[i];
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"{i + 1}. Name: {s.Name}, IP: {s.IP}, Username: {s.Username}");
+            Console.WriteLine(
+                $"{Pad((i + 1).ToString(), noWidth)} | {Pad(s.Name, nameWidth)} | {Pad(s.IP, ipWidth)} | {Pad(s.Username, userWidth)}");
         }
+
         Console.ResetColor();
     }
+
+    static string Pad(string text, int width)
+    {
+        if (text.Length > width)
+            return text.Substring(0, width - 1) + "…"; // Trim long text with ellipsis
+        return text.PadRight(width);
+    }
+
 
     static void AddServer()
     {
