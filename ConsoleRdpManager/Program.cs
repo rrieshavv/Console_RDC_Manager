@@ -137,8 +137,7 @@ class Program
         for (int i = 0; i < servers.Count; i++)
         {
             var s = servers[i];
-            Console.WriteLine(
-                $"{Pad((i + 1).ToString(), noWidth)} | {Pad(s.Name, nameWidth)} | {Pad(s.IP, ipWidth)} | {Pad(s.Username, userWidth)}");
+            Console.WriteLine($"{Pad((i + 1).ToString(), noWidth)} | {Pad(s.Name, nameWidth)} | {Pad(s.IP, ipWidth)} | {Pad(s.Username, userWidth)}");
         }
 
         Console.ResetColor();
@@ -147,7 +146,7 @@ class Program
     static string Pad(string text, int width)
     {
         if (text.Length > width)
-            return text.Substring(0, width - 1) + "…"; // Trim long text with ellipsis
+            return text.Substring(0, width - 1) + "…";
         return text.PadRight(width);
     }
 
